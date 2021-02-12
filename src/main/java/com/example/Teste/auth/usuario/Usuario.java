@@ -26,6 +26,9 @@ public class Usuario implements UserDetails {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(nullable = false, length = 255)
+    private String password;
+
     private Boolean ativo = true;
 
     @Embedded
@@ -45,7 +48,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getPassword() {
-        return credentials.getPassword();
+        return getPassword();
     }
 
     @Override
