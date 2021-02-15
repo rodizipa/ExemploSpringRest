@@ -36,7 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails,
                                 null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource()
-                .buildDetails(httpServletRequest));
+                        .buildDetails(httpServletRequest));
 
                 SecurityContextHolder.getContext()
                         .setAuthentication(authenticationToken);
@@ -52,7 +52,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) &&
-                headerAuth.startsWith("Bearer ")){
+                headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }
         return null;

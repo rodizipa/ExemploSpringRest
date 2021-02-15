@@ -1,7 +1,6 @@
 package com.example.Teste.auth.usuario;
 
 import com.example.Teste.auth.role.Role;
-import com.example.Teste.auth.usuario.Credentials;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,9 +30,6 @@ public class Usuario implements UserDetails {
 
     private Boolean ativo = true;
 
-    @Embedded
-    private Credentials credentials;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "usuario_role",
             joinColumns = @JoinColumn(name="usuario_id"),
@@ -48,12 +44,12 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return getUsername();
+        return username;
     }
 
     @Override

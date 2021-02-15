@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@Configuration
 public class DateTimeSerializer extends JsonSerializer<LocalDate> {
     @Override
     public void serialize(LocalDate localDate, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
@@ -16,7 +17,7 @@ public class DateTimeSerializer extends JsonSerializer<LocalDate> {
     }
 
     public String toString(LocalDate valor) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         return valor.format(formatter);
     }
 }

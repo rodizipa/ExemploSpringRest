@@ -4,6 +4,7 @@ import com.example.Teste.auth.token.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,37 +20,46 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsService usuarioServiceImpl;
 
     @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
+
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
 
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
+        auth.userDetailsService(usuarioServiceImpl)
                 .passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint).and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests().antMatchers("/auth/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
-                .anyRequest().permitAll();
+                .anyRequest().authenticated();
+
+
         http.headers().frameOptions().disable();
-
-        http.addFilterBefore(authenticationJwtTokenFilter(),
-                UsernamePasswordAuthenticationFilter.class);
-
     }
 }
